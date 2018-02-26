@@ -10,7 +10,7 @@ Issue the dokcer run command below. The Certificate and certificate password wil
 docker run \
     --name ipsec-vpn-server \
     --restart=always \
-    -v $PWD/credentials:/certs/user-cert
+    -v $PWD/credentials:/certs/user-cert \
     -p 500:500/udp \
     -p 4500:4500/udp \
     -d --privileged \
