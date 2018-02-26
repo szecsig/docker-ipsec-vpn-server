@@ -60,9 +60,9 @@ RUN wget -q -O "strongswan.tar.bz2" ${STRONGSWAN_LATEST} && \
     make install && \
     mkdir -p /ipsec-init    
 
-ADD ${RAW_GITHUB}/szecsig/alpine-ipsec-vpn-docker/master/entrypoint.sh /ipsec-init/
-ADD ${RAW_GITHUB}/szecsig/alpine-ipsec-vpn-docker/master/Config/ipsec.conf /ipsec-init/
-ADD ${RAW_GITHUB}/szecsig/alpine-ipsec-vpn-docker/master/Config/ipsec.secrets /ipsec-init/
+ADD ${RAW_GITHUB}/szecsig/docker-ipsec-vpn-server/master/entrypoint.sh /ipsec-init/
+ADD ${RAW_GITHUB}/szecsig/docker-ipsec-vpn-server/master/config/ipsec.conf /ipsec-init/
+ADD ${RAW_GITHUB}/szecsig/docker-ipsec-vpn-server/master/config/ipsec.secrets /ipsec-init/
 
 RUN cd /ipsec-init && \
     chmod +x entrypoint.sh && cp ./ipsec.conf /etc/ipsec.conf && \
