@@ -1,7 +1,8 @@
 #!/bin/sh
 
 PUBLIC_IP=$(dig @resolver1.opendns.com -t A -4 myip.opendns.com +short)
-NEW_PASSWD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
+CERT_PASSWD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
+USER_PASSWD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)
 
 sed -i.bak s/leftid=@moon.strongswan.org/leftid=$PUBLIC_IP/g /etc/ipsec.conf
 sed -i.bak s/ip_address/$PUBLIC_IP/g /etc/ipsec.secrets
@@ -17,8 +18,8 @@ if [ -f "/etc/ipsec.d/certs/vpn-server-cert.pem" ]; then
    exec /usr/sbin/ipsec "$@"; echo "OK! Server certificate already exists, nothing to do..."; exit 1;
 fi
 
-sed -i.bak s/random_password/$NEW_PASSWD/g /etc/ipsec.secrets
-echo -e "Username: vpn\nUser and Certificate password: $NEW_PASSWD" >> /certs/user-cert/password
+sed -i.bak s/random_password/$USER_PASSWD/g /etc/ipsec.secrets
+echo -e "Certificate password: $CERT_PASSWD\nUsername: vpn\nUser password: $USER_PASSWD" >> /certs/client-cert/passwords.txt
 
 mkdir -p /certs
 cd /certs
@@ -29,9 +30,9 @@ ipsec pki --pub --in vpn-server-key.pem --type rsa | ipsec pki --issue --lifetim
 cp ./vpn-server-cert.pem /etc/ipsec.d/certs/vpn-server-cert.pem
 cp ./vpn-server-key.pem /etc/ipsec.d/private/vpn-server-key.pem
 
-mkdir -p /certs/user-cert
-cd /certs/user-cert
-openssl pkcs12 -in /certs/vpn-server-cert.pem -inkey /certs/vpn-server-key.pem -certfile /certs/server-root-ca.pem -passout pass:$NEW_PASSWD -export -out client-certificate.p12
+mkdir -p /certs/client-cert
+cd /certs/client-cert
+openssl pkcs12 -in /certs/vpn-server-cert.pem -inkey /certs/vpn-server-key.pem -certfile /certs/server-root-ca.pem -passout pass:$CERT_PASSWD -export -out client-certificate.p12
 
 exec /usr/sbin/ipsec "$@"
 

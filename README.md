@@ -4,13 +4,13 @@ This is a Dockerfile/image which always compiles the latest version of Strongswa
 
 ## Quick start
 
-Issue the dokcer run command below. The Certificate and certificate password will be mounted under `credentials` directory. The default username is `vpn` and the password same as the certificate password.   
+Issue the dokcer run command below. The Certificate will be bind mounted under `credentials` directory on the host machine. The default username is `vpn` and the generated user and certificate passwords can be found in `passwords.txt`.
 
 ```
 docker run \
     --name ipsec-vpn-server \
     --restart=always \
-    -v $PWD/credentials:/certs/user-cert \
+    -v $PWD/credentials:/certs/client-cert \
     -p 500:500/udp \
     -p 4500:4500/udp \
     -d --privileged \
